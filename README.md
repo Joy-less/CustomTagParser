@@ -1,5 +1,7 @@
 # Custom Tag Parser
 
+[![NuGet](https://img.shields.io/nuget/v/CustomTagParser.svg)](https://www.nuget.org/packages/CustomTagParser)
+
 A simple parser of custom tag pairs, for example BBCode.
 
 ## Usage
