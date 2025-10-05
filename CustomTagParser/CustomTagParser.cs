@@ -9,6 +9,7 @@ public static class CustomTagParser {
     /// </summary>
     /// <param name="Input">The input string containing custom tag pairs.</param>
     /// <param name="TagPairs">The custom tag pairs to apply.</param>
+    /// <param name="TagUnits">The custom tag units to apply.</param>
     /// <returns>
     /// The result of applying the custom tag pairs.
     /// </returns>
