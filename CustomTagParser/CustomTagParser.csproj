@@ -22,6 +22,7 @@
     <Description>A simple parser of custom tag pairs, for example BBCode.</Description>
     <PackageProjectUrl>https://github.com/Joy-less/CustomTagParser</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
