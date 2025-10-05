@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CustomTagParser.Tests/CustomTagParser.Tests.csproj" />
+  <Project Path="CustomTagParser/CustomTagParser.csproj" />
+</Solution>
