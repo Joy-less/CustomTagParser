@@ -24,6 +24,8 @@
     <PackageProjectUrl>https://github.com/Joy-less/CustomTagParser</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>Parser;BBCode;Tags</PackageTags>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
