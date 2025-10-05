@@ -20,6 +20,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Custom Tag Parser</Title>
     <Description>A simple parser of custom tag pairs, for example BBCode.</Description>
+    <RepositoryUrl>https://github.com/Joy-less/CustomTagParser</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Joy-less/CustomTagParser</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
