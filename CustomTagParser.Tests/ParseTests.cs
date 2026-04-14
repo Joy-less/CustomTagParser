@@ -3,7 +3,7 @@ namespace CustomTags.Tests;
 public class ParseTests {
     [Fact]
     public void ReadmeBbcodeTest() {
-        string Result = CustomTagParser.Parse("[b][i]This is bold italics.[/i][/b] [i]This is just italics.[/i] [lb]This is in brackets.[rb]",
+        string Result = CustomTagParser.Parse(CustomTagParser.Parse("[b][i]This is bold italics.[/i][/b] [i]This is just italics.[/i] [lb]This is in brackets.[rb]",
             TagPairs: [
                 new CustomTagPair() {
                     OpeningTag = "[b]",
@@ -17,7 +17,7 @@ public class ParseTests {
                     Replace = (string Text, string Left, string Right)
                         => $"<i>" + Text + "</i>",
                 },
-            ],
+            ]),
             TagUnits: [
                 new CustomTagUnit() {
                     Tag = "[lb]",
@@ -127,7 +127,7 @@ public class ParseTests {
     }
     [Fact]
     public void UnitBbcodeTest() {
-        CustomTagParser.Parse("a[lb]b[rb]", [], [
+        CustomTagParser.Parse("a[lb]b[rb]", [
             new CustomTagUnit() {
                 Tag = "[lb]",
                 Replace = (string Left, string Right)
