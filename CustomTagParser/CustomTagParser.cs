@@ -12,7 +12,7 @@ public static class CustomTagParser {
     /// <returns>
     /// The result of applying the custom tag pairs.
     /// </returns>
-    public static string Parse(string Input, scoped ReadOnlySpan<CustomTagPair> TagPairs = default) {
+    public static string Parse(scoped ReadOnlySpan<char> Input, scoped ReadOnlySpan<CustomTagPair> TagPairs = default) {
         foreach (CustomTagPair TagPair in TagPairs) {
         Retry:
             // Find opening tag
@@ -27,7 +27,7 @@ public static class CustomTagParser {
             int Depth = 1;
             for (int Index = OpeningTagEndIndex; Index < Input.Length; Index++) {
                 // Closing tag
-                if (Input.AsSpan(Index).StartsWith(TagPair.ClosingTag.Match, TagPair.ClosingTag.ComparisonType)) {
+                if (Input[Index..].StartsWith(TagPair.ClosingTag.Match, TagPair.ClosingTag.ComparisonType)) {
                     // Pop
                     Depth--;
 
@@ -42,7 +42,7 @@ public static class CustomTagParser {
                     continue;
                 }
                 // Opening tag
-                else if (Input.AsSpan(Index).StartsWith(TagPair.OpeningTag.Match, TagPair.OpeningTag.ComparisonType)) {
+                else if (Input[Index..].StartsWith(TagPair.OpeningTag.Match, TagPair.OpeningTag.ComparisonType)) {
                     // Push
                     Depth++;
 
@@ -57,12 +57,12 @@ public static class CustomTagParser {
             int ClosingTagEndIndex = ClosingTagIndex + TagPair.ClosingTag.Match.Length;
 
             // Extract original contents
-            string Contents = Input[OpeningTagEndIndex..ClosingTagIndex];
+            string Contents = new(Input[OpeningTagEndIndex..ClosingTagIndex]);
 
             // Extract text preceding opening tag
-            string Left = Input[..OpeningTagIndex];
+            string Left = new(Input[..OpeningTagIndex]);
             // Extract text following closing tag
-            string Right = Input[ClosingTagEndIndex..];
+            string Right = new(Input[ClosingTagEndIndex..]);
 
             // Check tag condition
             if (TagPair.Condition is not null) {
@@ -78,11 +78,11 @@ public static class CustomTagParser {
             }
 
             // Replace tagged contents
-            Input = Input[..OpeningTagIndex] + NewContents + Input[ClosingTagEndIndex..];
+            Input = string.Concat(Input[..OpeningTagIndex], NewContents, Input[ClosingTagEndIndex..]);
             goto Retry;
         }
 
-        return Input;
+        return new string(Input);
     }
 
     /// <summary>
@@ -93,7 +93,7 @@ public static class CustomTagParser {
     /// <returns>
     /// The result of applying the custom tag units.
     /// </returns>
-    public static string Parse(string Input, scoped ReadOnlySpan<CustomTagUnit> TagUnits = default) {
+    public static string Parse(scoped ReadOnlySpan<char> Input, scoped ReadOnlySpan<CustomTagUnit> TagUnits = default) {
         foreach (CustomTagUnit TagUnit in TagUnits) {
         Retry:
             // Find tag
@@ -104,9 +104,9 @@ public static class CustomTagParser {
             int TagEndIndex = TagIndex + TagUnit.Tag.Match.Length;
 
             // Extract text preceding opening tag
-            string Left = Input[..TagIndex];
+            string Left = new(Input[..TagIndex]);
             // Extract text following closing tag
-            string Right = Input[TagEndIndex..];
+            string Right = new(Input[TagEndIndex..]);
 
             // Check tag condition
             if (TagUnit.Condition is not null) {
@@ -122,10 +122,10 @@ public static class CustomTagParser {
             }
 
             // Replace tagged contents
-            Input = Input[..TagIndex] + NewContents + Input[TagEndIndex..];
+            Input = string.Concat(Input[..TagIndex], NewContents, Input[TagEndIndex..]);
             goto Retry;
         }
 
-        return Input;
+        return new string(Input);
     }
 }
