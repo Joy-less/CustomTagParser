@@ -3,36 +3,44 @@ namespace CustomTags.Tests;
 public class ParseTests {
     [Fact]
     public void ReadmeBbcodeTest() {
-        string Result = CustomTagParser.Parse(CustomTagParser.Parse("[b][i]This is bold italics.[/i][/b] [i]This is just italics.[/i] [lb]This is in brackets.[rb]",
-            TagPairs: [
-                new CustomTagPair() {
-                    OpeningTag = "[b]",
-                    ClosingTag = "[/b]",
-                    Replace = (string Text, string Left, string Right)
-                        => $"<b>" + Text + "</b>",
-                },
-                new CustomTagPair() {
-                    OpeningTag = "[i]",
-                    ClosingTag = "[/i]",
-                    Replace = (string Text, string Left, string Right)
-                        => $"<i>" + Text + "</i>",
-                },
-            ]),
-            TagUnits: [
-                new CustomTagUnit() {
-                    Tag = "[lb]",
-                    Replace = (string Left, string Right)
-                        => "[",
-                },
-                new CustomTagUnit() {
-                    Tag = "[rb]",
-                    Replace = (string Left, string Right)
-                        => "]",
-                },
-            ]
-        );
+        string Result = CustomTagParser.Parse("[b][i]This is bold italics.[/i][/b] [i]This is just italics.[/i] [lb]This is in brackets.[rb]", [
+            new CustomTagPair() {
+                OpeningTag = "[b]",
+                ClosingTag = "[/b]",
+                Replace = (string Contents, string Left, string Right)
+                    => Left + $"<b>" + Contents + "</b>" + Right,
+            },
+            new CustomTagPair() {
+                OpeningTag = "[i]",
+                ClosingTag = "[/i]",
+                Replace = (string Contents, string Left, string Right)
+                    => Left + $"<i>" + Contents + "</i>" + Right,
+            },
+        ]);
+        Result = CustomTagParser.Parse(Result, [
+            new CustomTagUnit() {
+                Tag = "[lb]",
+                Replace = (string Left, string Right)
+                    => Left + "[" + Right,
+            },
+            new CustomTagUnit() {
+                Tag = "[rb]",
+                Replace = (string Left, string Right)
+                    => Left + "]" + Right,
+            },
+        ]);
 
         Result.ShouldBe("<b><i>This is bold italics.</i></b> <i>This is just italics.</i> [This is in brackets.]");
+
+        CustomTagParser.Parse("Hello [capitalize]Lum[/capitalize]!", [
+            new CustomTagPair() {
+                OpeningTag = "[capitalize]",
+                ClosingTag = "[/capitalize]",
+                Replace = (string Contents, string Left, string Right) => {
+                    return Left + Contents.ToUpper() + Right;
+                },
+            },
+        ]).ShouldBe("Hello LUM!");
     }
     [Fact]
     public void StandardBbcodeTest() {
@@ -41,7 +49,7 @@ public class ParseTests {
                 OpeningTag = "[a]",
                 ClosingTag = "[/a]",
                 Replace = (string Text, string Left, string Right)
-                    => $"(FIRST)" + Text + "(SECOND)",
+                    => Left + $"(FIRST)" + Text + "(SECOND)" + Right,
             },
         ]).ShouldBe("a(FIRST)b(SECOND)c");
     }
@@ -52,7 +60,7 @@ public class ParseTests {
                 OpeningTag = "[a]",
                 ClosingTag = "[/a]",
                 Replace = (string Text, string Left, string Right)
-                    => $"(FIRST)" + Text + "(SECOND)",
+                    => Left + $"(FIRST)" + Text + "(SECOND)" + Right,
             },
         ]).ShouldBe("a(FIRST)b(FIRST)c(SECOND)d(SECOND)e");
     }
@@ -63,7 +71,7 @@ public class ParseTests {
                 OpeningTag = "[a]",
                 ClosingTag = "[/a]",
                 Replace = (string Text, string Left, string Right)
-                    => $"(FIRST)" + Text + "(SECOND)",
+                    => Left + $"(FIRST)" + Text + "(SECOND)" + Right,
             },
         ]).ShouldBe("a(FIRST)bc(SECOND)d[/a]e");
     }
@@ -74,7 +82,7 @@ public class ParseTests {
                 OpeningTag = "[a]",
                 ClosingTag = "[/a]",
                 Replace = (string Text, string Left, string Right)
-                    => $"(FIRST)" + Text + "(SECOND)",
+                    => Left + $"(FIRST)" + Text + "(SECOND)" + Right,
                 Condition = (string Contents, string Left, string Right)
                     => !Left.EndsWith('\\'),
             },
@@ -87,7 +95,7 @@ public class ParseTests {
                 OpeningTag = "[a]",
                 ClosingTag = "[/a]",
                 Replace = (string Text, string Left, string Right)
-                    => $"(FIRST)" + Text + "(SECOND)",
+                    => Left + $"(FIRST)" + Text + "(SECOND)" + Right,
             },
         ]).ShouldBe("(FIRST)(SECOND)");
     }
@@ -98,19 +106,19 @@ public class ParseTests {
                 OpeningTag = "[a]",
                 ClosingTag = "[/a]",
                 Replace = (string Text, string Left, string Right)
-                    => $"(a:FIRST)" + Text + "(a:SECOND)",
+                    => Left + $"(a:FIRST)" + Text + "(a:SECOND)" + Right,
             },
             new CustomTagPair() {
                 OpeningTag = "[b]",
                 ClosingTag = "[/b]",
                 Replace = (string Text, string Left, string Right)
-                    => $"(b:FIRST)" + Text + "(b:SECOND)",
+                    => Left + $"(b:FIRST)" + Text + "(b:SECOND)" + Right,
             },
             new CustomTagPair() {
                 OpeningTag = "[c]",
                 ClosingTag = "[/c]",
                 Replace = (string Text, string Left, string Right)
-                    => $"(c:FIRST)" + Text + "(c:SECOND)",
+                    => Left + $"(c:FIRST)" + Text + "(c:SECOND)" + Right,
             },
         ]).ShouldBe("(a:FIRST)(b:FIRST)(b:SECOND)(a:SECOND)(c:FIRST)(c:SECOND)");
     }
@@ -121,7 +129,7 @@ public class ParseTests {
                 OpeningTag = "[a]",
                 ClosingTag = "[/a]",
                 Replace = (string Text, string Left, string Right)
-                    => $"(FIRST)" + Text + "(SECOND)",
+                    => Left + $"(FIRST)" + Text + "(SECOND)" + Right,
             },
         ]).ShouldBe("");
     }
@@ -131,12 +139,12 @@ public class ParseTests {
             new CustomTagUnit() {
                 Tag = "[lb]",
                 Replace = (string Left, string Right)
-                    => "[",
+                    => Left + "[" + Right,
             },
             new CustomTagUnit() {
                 Tag = "[rb]",
                 Replace = (string Left, string Right)
-                    => "]",
+                    => Left + "]" + Right,
             },
         ]).ShouldBe("a[b]");
     }

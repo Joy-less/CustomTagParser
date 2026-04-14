@@ -71,14 +71,14 @@ public static class CustomTagParser {
                 }
             }
 
-            // Fetch new contents
-            string? NewContents = TagPair.Replace(Contents, Left, Right);
-            if (NewContents is null) {
+            // Fetch new input
+            string? NewInput = TagPair.Replace(Contents, Left, Right);
+            if (NewInput is null) {
                 continue;
             }
 
-            // Replace tagged contents
-            Input = string.Concat(Input[..OpeningTagIndex], NewContents, Input[ClosingTagEndIndex..]);
+            // Replace input
+            Input = NewInput;
             goto Retry;
         }
 
@@ -115,14 +115,14 @@ public static class CustomTagParser {
                 }
             }
 
-            // Fetch new contents
-            string? NewContents = TagUnit.Replace(Left, Right);
-            if (NewContents is null) {
+            // Fetch new input
+            string? NewInput = TagUnit.Replace(Left, Right);
+            if (NewInput is null) {
                 continue;
             }
 
-            // Replace tagged contents
-            Input = string.Concat(Input[..TagIndex], NewContents, Input[TagEndIndex..]);
+            // Replace input
+            Input = NewInput;
             goto Retry;
         }
 

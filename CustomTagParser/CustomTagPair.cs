@@ -15,7 +15,7 @@ public readonly record struct CustomTagPair {
     /// </summary>
     public required CustomTag ClosingTag { get; init; }
     /// <summary>
-    /// A function that accepts the contents of the tag pair, the text preceding the opening tag and the text following the closing tag and returns a string to replace the tagged contents.
+    /// A function that accepts the contents of the tag pair, the text preceding the opening tag and the text following the closing tag and returns a string to replace the input string.
     /// </summary>
     public required ReplaceDelegate Replace { get; init; }
     /// <summary>
@@ -24,7 +24,7 @@ public readonly record struct CustomTagPair {
     public ConditionDelegate? Condition { get; init; } = null;
 
     /// <summary>
-    /// A function that accepts the contents of the tag pair, the text preceding the opening tag and the text following the closing tag and returns a string to replace the tagged contents.
+    /// A function that accepts the contents of the tag pair, the text preceding the opening tag and the text following the closing tag and returns a string to replace the input string.
     /// </summary>
     /// <param name="Contents">The original contents of the tag pair.</param>
     /// <param name="Left">The text preceding the opening tag.</param>
@@ -49,7 +49,7 @@ public readonly record struct CustomTagPair {
     /// </summary>
     /// <param name="OpeningTag">The tag that starts the custom tag pair.</param>
     /// <param name="ClosingTag">The tag that ends the custom tag pair.</param>
-    /// <param name="Replace">A function that accepts the contents of the tag pair, the text preceding the opening tag and the text following the closing tag and returns a string to replace the tagged contents.</param>
+    /// <param name="Replace">A function that accepts the contents of the tag pair, the text preceding the opening tag and the text following the closing tag and returns a string to replace the input string.</param>
     /// <param name="Condition">A function that accepts the contents of the tag pair, the text preceding the opening tag and the text following the closing tag and returns whether the tag pair should be applied.</param>
     [SetsRequiredMembers]
     public CustomTagPair(CustomTag OpeningTag, CustomTag ClosingTag, ReplaceDelegate Replace, ConditionDelegate? Condition = null) {

@@ -7,34 +7,32 @@ A simple parser of custom tag pairs, for example BBCode.
 ## Usage
 
 ```cs
-string Result = CustomTagParser.Parse("[b][i]This is bold italics.[/i][/b] [i]This is just italics.[/i] [lb]This is in brackets.[rb]",
-    TagPairs: [
-        new CustomTagPair() {
-            OpeningTag = "[b]",
-            ClosingTag = "[/b]",
-            Replace = (string Text, string Left, string Right)
-                => $"<b>" + Text + "</b>",
-        },
-        new CustomTagPair() {
-            OpeningTag = "[i]",
-            ClosingTag = "[/i]",
-            Replace = (string Text, string Left, string Right)
-                => $"<i>" + Text + "</i>",
-        },
-    ],
-    TagUnits: [
-        new CustomTagUnit() {
-            Tag = "[lb]",
-            Replace = (string Left, string Right)
-                => "[",
-        },
-        new CustomTagUnit() {
-            Tag = "[rb]",
-            Replace = (string Left, string Right)
-                => "]",
-        },
-    ]
-);
+string Result = CustomTagParser.Parse("[b][i]This is bold italics.[/i][/b] [i]This is just italics.[/i] [lb]This is in brackets.[rb]", [
+    new CustomTagPair() {
+        OpeningTag = "[b]",
+        ClosingTag = "[/b]",
+        Replace = (string Contents, string Left, string Right)
+            => Left + $"<b>" + Contents + "</b>" + Right,
+    },
+    new CustomTagPair() {
+        OpeningTag = "[i]",
+        ClosingTag = "[/i]",
+        Replace = (string Contents, string Left, string Right)
+            => Left + $"<i>" + Contents + "</i>" + Right,
+    },
+]);
+Result = CustomTagParser.Parse(Result, [
+    new CustomTagUnit() {
+        Tag = "[lb]",
+        Replace = (string Left, string Right)
+            => Left + "[" + Right,
+    },
+    new CustomTagUnit() {
+        Tag = "[rb]",
+        Replace = (string Left, string Right)
+            => Left + "]" + Right,
+    },
+]);
 ```
 ```
 <b><i>This is bold italics.</i></b> <i>This is just italics.</i> [This is in brackets.]
@@ -47,22 +45,16 @@ This library is useful for adding custom nestable tags to dialog systems and oth
 For example:
 
 ```cs
-CustomTagParser.Parse("Hello [name]Arthur[/name]!", [
+CustomTagParser.Parse("Hello [capitalize]Lum[/capitalize]!", [
     new CustomTagPair() {
-        OpeningTag = "[name]",
-        ClosingTag = "[/name]",
-        Replace = (string Name, string Left, string Right) => {
-            switch (Name) {
-                case "Arthur":
-                    return ArthurTitle switch {
-                        Title.Knight => "Sir Arthur",
-                        Title.King => "King Arthur",
-                        _ => "Arthur",
-                    };
-                default:
-                    return Name;
-            }
+        OpeningTag = "[capitalize]",
+        ClosingTag = "[/capitalize]",
+        Replace = (string Contents, string Left, string Right) => {
+            return Left + Contents.ToUpper() + Right;
         },
     },
 ]);
+```
+```
+Hello LUM!
 ```
