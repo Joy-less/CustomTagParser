@@ -68,14 +68,16 @@ public static class CustomTagParser {
 
                 // Check tag condition
                 if (TagPair.Condition is not null) {
-
                     if (!TagPair.Condition(Contents, Left, Right)) {
                         continue;
                     }
                 }
 
                 // Fetch new contents
-                string NewContents = TagPair.Replace(Contents, Left, Right);
+                string? NewContents = TagPair.Replace(Contents, Left, Right);
+                if (NewContents is null) {
+                    continue;
+                }
 
                 // Replace tagged contents
                 Input = Input[..OpeningTagIndex] + NewContents + Input[ClosingTagEndIndex..];
@@ -100,14 +102,16 @@ public static class CustomTagParser {
 
                 // Check tag condition
                 if (TagUnit.Condition is not null) {
-
                     if (!TagUnit.Condition(Left, Right)) {
                         continue;
                     }
                 }
 
                 // Fetch new contents
-                string NewContents = TagUnit.Replace(Left, Right);
+                string? NewContents = TagUnit.Replace(Left, Right);
+                if (NewContents is null) {
+                    continue;
+                }
 
                 // Replace tagged contents
                 Input = Input[..TagIndex] + NewContents + Input[TagEndIndex..];

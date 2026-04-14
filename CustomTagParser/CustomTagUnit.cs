@@ -25,9 +25,9 @@ public readonly record struct CustomTagUnit {
     /// <param name="Left">The text preceding the tag.</param>
     /// <param name="Right">The text following the tag.</param>
     /// <returns>
-    /// A string to replace the tag.
+    /// A string to replace the tag, or <see langword="null"/> to skip replacing.
     /// </returns>
-    public delegate string ReplaceDelegate(string Left, string Right);
+    public delegate string? ReplaceDelegate(string Left, string Right);
     /// <summary>
     /// A function that accepts the text preceding the tag and the text following the tag and returns whether the tag pair should be applied.
     /// </summary>

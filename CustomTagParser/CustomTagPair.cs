@@ -30,9 +30,9 @@ public readonly record struct CustomTagPair {
     /// <param name="Left">The text preceding the opening tag.</param>
     /// <param name="Right">The text following the closing tag.</param>
     /// <returns>
-    /// A string to replace the tagged contents.
+    /// A string to replace the tagged contents, or <see langword="null"/> to skip replacing.
     /// </returns>
-    public delegate string ReplaceDelegate(string Contents, string Left, string Right);
+    public delegate string? ReplaceDelegate(string Contents, string Left, string Right);
     /// <summary>
     /// A function that accepts the contents of the tag pair, the text preceding the opening tag and the text following the closing tag and returns whether the tag pair should be applied.
     /// </summary>
