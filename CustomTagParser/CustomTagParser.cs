@@ -39,7 +39,8 @@ public static class CustomTagParser {
 
                     // Move past closing tag
                     Index += TagPair.ClosingTag.Match.Length;
-                    continue;
+                    // Negate index increment
+                    Index--;
                 }
                 // Opening tag
                 else if (Input[Index..].StartsWith(TagPair.OpeningTag.Match, TagPair.OpeningTag.ComparisonType)) {
@@ -48,7 +49,8 @@ public static class CustomTagParser {
 
                     // Move past opening tag
                     Index += TagPair.OpeningTag.Match.Length;
-                    continue;
+                    // Negate index increment
+                    Index--;
                 }
             }
             if (ClosingTagIndex < 0) {
