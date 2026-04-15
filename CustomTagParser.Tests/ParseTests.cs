@@ -148,4 +148,11 @@ public class ParseTests {
             },
         ]).ShouldBe("a[b]");
     }
+    [Fact]
+    public void FindClosingTagTest() {
+        CustomTagParser.FindClosingTag("[[][]] ] []]", "[", "]").ShouldBe(7);
+        CustomTagParser.FindClosingTag("[[][]] ] []]", '[', ']').ShouldBe(7);
+        CustomTagParser.FindClosingTag("[[][] ] ][]]", 1, "[", "]").ShouldBe(6);
+        CustomTagParser.FindClosingTag("[[][] ] ][]]", 1, '[', ']').ShouldBe(6);
+    }
 }

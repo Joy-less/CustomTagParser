@@ -23,36 +23,7 @@ public static class CustomTagParser {
             int OpeningTagEndIndex = OpeningTagIndex + TagPair.OpeningTag.Match.Length;
 
             // Find closing tag
-            int ClosingTagIndex = -1;
-            int Depth = 1;
-            for (int Index = OpeningTagEndIndex; Index < Input.Length; Index++) {
-                // Closing tag
-                if (Input[Index..].StartsWith(TagPair.ClosingTag.Match, TagPair.ClosingTag.ComparisonType)) {
-                    // Pop
-                    Depth--;
-
-                    // Found matching closing tag
-                    if (Depth == 0) {
-                        ClosingTagIndex = Index;
-                        break;
-                    }
-
-                    // Move past closing tag
-                    Index += TagPair.ClosingTag.Match.Length;
-                    // Negate index increment
-                    Index--;
-                }
-                // Opening tag
-                else if (Input[Index..].StartsWith(TagPair.OpeningTag.Match, TagPair.OpeningTag.ComparisonType)) {
-                    // Push
-                    Depth++;
-
-                    // Move past opening tag
-                    Index += TagPair.OpeningTag.Match.Length;
-                    // Negate index increment
-                    Index--;
-                }
-            }
+            int ClosingTagIndex = FindClosingTag(Input, OpeningTagEndIndex, TagPair.OpeningTag, TagPair.ClosingTag);
             if (ClosingTagIndex < 0) {
                 continue;
             }
@@ -129,5 +100,105 @@ public static class CustomTagParser {
         }
 
         return new string(Input);
+    }
+
+    /// <summary>
+    /// Finds the start index of the closing custom tag, ignoring nested custom tags.
+    /// </summary>
+    /// <param name="Input">The input string containing custom tags.</param>
+    /// <param name="OpeningTag">The custom tag that starts a custom tag pair.</param>
+    /// <param name="ClosingTag">The custom tag that ends a custom tag pair.</param>
+    /// <returns>
+    /// The start index of the closing custom tag, ignoring nested custom tags, otherwise -1 if not found.
+    /// </returns>
+    public static int FindClosingTag(scoped ReadOnlySpan<char> Input, CustomTag OpeningTag, CustomTag ClosingTag) {
+        return FindClosingTag(Input, 0, OpeningTag, ClosingTag);
+    }
+
+    /// <summary>
+    /// Finds the start index of the closing custom tag, ignoring nested custom tags.
+    /// </summary>
+    /// <param name="Input">The input string containing custom tags.</param>
+    /// <param name="StartIndex">The starting index to check in <paramref name="Input"/>.</param>
+    /// <param name="OpeningTag">The custom tag that starts a custom tag pair.</param>
+    /// <param name="ClosingTag">The custom tag that ends a custom tag pair.</param>
+    /// <returns>
+    /// The start index of the closing custom tag, ignoring nested custom tags, otherwise -1 if not found.
+    /// </returns>
+    public static int FindClosingTag(scoped ReadOnlySpan<char> Input, int StartIndex, CustomTag OpeningTag, CustomTag ClosingTag) {
+        int Depth = 0;
+        for (int Index = StartIndex; Index < Input.Length; Index++) {
+            // Opening tag
+            if (Input[Index..].StartsWith(OpeningTag.Match, OpeningTag.ComparisonType)) {
+                // Push
+                Depth++;
+
+                // Move past opening tag
+                Index += OpeningTag.Match.Length;
+                // Negate index increment
+                Index--;
+            }
+            // Closing tag
+            else if (Input[Index..].StartsWith(ClosingTag.Match, ClosingTag.ComparisonType)) {
+                // Found matching closing tag
+                if (Depth == 0) {
+                    return Index;
+                }
+
+                // Pop
+                Depth--;
+
+                // Move past closing tag
+                Index += ClosingTag.Match.Length;
+                // Negate index increment
+                Index--;
+            }
+        }
+        return -1;
+    }
+
+    /// <summary>
+    /// Finds the index of the closing custom char, ignoring nested custom chars.
+    /// </summary>
+    /// <param name="Input">The input string containing custom chars.</param>
+    /// <param name="OpeningChar">The custom char that starts a custom char pair.</param>
+    /// <param name="ClosingChar">The custom char that ends a custom char pair.</param>
+    /// <returns>
+    /// The index of the closing custom char, ignoring nested custom chars, otherwise -1 if not found.
+    /// </returns>
+    public static int FindClosingTag(scoped ReadOnlySpan<char> Input, char OpeningChar, char ClosingChar) {
+        return FindClosingTag(Input, 0, OpeningChar, ClosingChar);
+    }
+
+    /// <summary>
+    /// Finds the index of the closing custom char, ignoring nested custom chars.
+    /// </summary>
+    /// <param name="Input">The input string containing custom chars.</param>
+    /// <param name="StartIndex">The starting index to check in <paramref name="Input"/>.</param>
+    /// <param name="OpeningChar">The custom char that starts a custom char pair.</param>
+    /// <param name="ClosingChar">The custom char that ends a custom char pair.</param>
+    /// <returns>
+    /// The index of the closing custom char, ignoring nested custom chars, otherwise -1 if not found.
+    /// </returns>
+    public static int FindClosingTag(scoped ReadOnlySpan<char> Input, int StartIndex, char OpeningChar, char ClosingChar) {
+        int Depth = 0;
+        for (int Index = StartIndex; Index < Input.Length; Index++) {
+            // Opening tag
+            if (Input[Index] == OpeningChar) {
+                // Push
+                Depth++;
+            }
+            // Closing tag
+            else if (Input[Index] == ClosingChar) {
+                // Found matching closing char
+                if (Depth == 0) {
+                    return Index;
+                }
+
+                // Pop
+                Depth--;
+            }
+        }
+        return -1;
     }
 }
